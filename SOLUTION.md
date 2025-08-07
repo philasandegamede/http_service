@@ -60,7 +60,7 @@ Follows least privilege principle
 - No Infrastructure to manage
 - Autoscaling capabilities
 ### Cons:
-- Slightly more expensive than EC2 for always on workloads
+- Slightly more expensive than EC2 for always-on workloads
 
 ## NAT Gateway: using only one shared Gateway
 ### Pros:
@@ -81,7 +81,9 @@ With the use of private subnets, this setup is security-focused but can benefit 
 
 ALB to enable HTTPS traffic to the application, which enforces encryption of data for the http service. Minimizes attacks.
 
+### RDS and DynamoDB
 
+For further network security, I would create a separate subnet for the RDS and DynamoDB. This will enable better network management and enhanced security. It allows better control over traffic flow and isolates sensitive data 
 ### Monitoring
 
 This setup would benefit a lot from a centralized monitoring system with aggregated logs/metrics such as ELK, Grafana, or OpenSearch
