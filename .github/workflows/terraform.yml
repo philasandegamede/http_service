@@ -1,0 +1,74 @@
+name: Deploy for http service on ECS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
+jobs:
+  deploy:
+    name: Terraform ECS Deploy
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      url: ${{ secrets.ECS_HEALTH_CHECK_URL }}
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6.0
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Terraform Init
+      working-directory: ./terraform
+      run: terraform init
+
+    - name: Terraform Validate
+      working-directory: ./terraform
+      run: terraform validate
+
+    - name: Terraform Plan
+      working-directory: ./terraform
+      run: terraform plan -out=tfplan
+
+
+    - name: Terraform Apply (Manual Approval Required)
+      working-directory: ./terraform
+      run: terraform apply -auto-approve tfplan
+
+    - name: Wait for ECS service to stabilize
+      run: |
+        echo "Waiting for ECS service to stabilize..."
+        aws ecs wait services-stable \
+          --cluster <your-cluster-name> \
+          --services <your-service-name> \
+          --region $AWS_REGION
+
+    - name: Health Check ECS Service
+      run: |
+        echo "Checking service health at ${{ secrets.ECS_HEALTH_CHECK_URL }}"
+        for i in {1..10}; do
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.ECS_HEALTH_CHECK_URL }}")
+          echo "Attempt $i: HTTP $STATUS"
+          if [ "$STATUS" -eq 200 ]; then
+            echo "✅ Service is healthy."
+            exit 0
+          fi
+          sleep 10
+        done
+        echo "❌ Service failed health check after multiple attempts."
+        exit 1
