@@ -11,10 +11,14 @@ Setup Instructions:
 1. A bucket would need to be created on AWS, which will be used to store the Terraform state. 
 2. AWS Credentials will need to be added to GitHub Secrets. This will be used for authenticating against the AWS environment to provision the infrastructure.
    Add the following to your secrets:
-   AWS_REGION=af-south-1
-   AWS_ACCESS_KEY_ID=XXXXXXXXX
-   AWS_SECRET_ACCESS_KEY=XXXXXXX
-3. Once the above is added, you are good to go.
+   
+   `AWS_REGION=af-south-1`
+   
+   `AWS_ACCESS_KEY_ID=XXXXXXXXX`
+   
+   `AWS_SECRET_ACCESS_KEY=XXXXXXX`
+   
+4. Once the above is added, you are good to go.
 
 The Terraform Github Action has the following stages:
  - Terraform Init (initialization step for Terraform)
