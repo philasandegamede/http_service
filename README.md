@@ -4,7 +4,7 @@
 This repository uses Terraform to provision a VPC, ECS, Postgres database instance, and monitoring for the HTTP service on AWS. The Terraform will provision everything on the af-south-1 region.
 
 Here is an overview architecture diagram:
-![Architectural Diagram ](./VPC_diagram.png)
+![Architectural Diagram ](./vpc_diagram.png)
 
 Setup Instructions:
 
