@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket  = "http-service-tf-state"
-    region  = "eu-west-1"
+    region  = "af-south-1"
     key     = "ecs-fargate/terraform.tfstate"
     encrypt = true
   }
